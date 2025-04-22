@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chat with Sheryl Joyce</title>
+  <style>
+    body { font-family: sans-serif; background: #fdfdfd; padding: 2em; }
+    #chatbox {
+      max-width: 700px;
+      margin: 0 auto; width: 100%; height: 400px; overflow-y: scroll; border: 1px solid #ccc; padding: 1em; margin-bottom: 1em; background: #fff; }
+    #input { width: 100%; padding: 1em; font-size: 1em; }
+  </style>
+</head>
+<body>
+  <h2>💬 Chat with Sheryl Joyce</h2>
+  <div id="chatbox"></div>
+  <input id="input" type="text" placeholder="Type your message..." autofocus />
+
+  <script>
+    const input = document.getElementById("input");
+    const chatbox = document.getElementById("chatbox");
+
+    function appendMessage(sender, text, role = "") {
+      const msg = document.createElement("div");
+      msg.className = role;
+      msg.innerHTML = `<strong>${sender}:</strong> ${text.replace(/\n/g, '<br>')}`;
+      chatbox.appendChild(msg);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+      const msg = document.createElement("div");
+      msg.innerHTML = `<strong>${sender}:</strong> ${text}`;
+      chatbox.appendChild(msg);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    input.addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+        const message = input.value.trim();
+        if (!message) return;
+        appendMessage("You", message, "user");
+        input.value = "";
+
+        fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message })
+        })
+        .then(res => res.json())
+        .then(data => {
+          appendMessage("Sheryl Joyce", data.reply, "bot");
+        })
+      .catch(err => {
+        appendMessage("System", "⚠️ Failed to get response. Please try again.", "bot");
+        console.error("Fetch error:", err);
+      });
+      }
+    })
+      .catch(err => {
+        appendMessage("System", "⚠️ Failed to get response. Please try again.", "bot");
+        console.error("Fetch error:", err);
+      });
+  </script>
+</body>
+</html>
